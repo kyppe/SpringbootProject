@@ -1,50 +1,39 @@
 package com.sesame.librairie.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.sesame.librairie.model.Livre;
+import com.sesame.librairie.repository.LivreRepository;
 
 @Service
 public class LivreService {
 
-    private final List<Livre> livres = new ArrayList<>();
-    private long prochainId = 6;
+    private final LivreRepository livreRepository;
 
-    public LivreService() {
-        livres.add(new Livre(1L, "Les Misérables", "Victor Hugo", 1862));
-        livres.add(new Livre(2L, "Notre-Dame de Paris", "Victor Hugo", 1831));
-        livres.add(new Livre(3L, "L'Étranger", "Albert Camus", 1942));
-        livres.add(new Livre(4L, "La Peste", "Albert Camus", 1947));
-        livres.add(new Livre(5L, "Le Petit Prince", "Antoine de Saint-Exupéry", 1943));
+    public LivreService(LivreRepository livreRepository) {
+        this.livreRepository = livreRepository;
     }
 
     public List<Livre> lister(String auteur) {
         if (auteur == null) {
-            return livres;
+            return livreRepository.findAll();
         }
-        return livres.stream()
-                .filter(l -> l.getAuteur().toLowerCase()
-                        .contains(auteur.toLowerCase()))
-                .toList();
+        return livreRepository.findByAuteurContainingIgnoreCase(auteur);
     }
 
     public Optional<Livre> trouver(Long id) {
-        return livres.stream()
-                .filter(l -> l.getId().equals(id))
-                .findFirst();
+        return livreRepository.findById(id);
     }
 
     public int compter() {
-        return livres.size();
+        return (int) livreRepository.count();
     }
 
     public Livre ajouter(String titre, String auteur, int annee) {
-        Livre livre = new Livre(prochainId++, titre, auteur, annee);
-        livres.add(livre);
-        return livre;
+        Livre livre = new Livre(null, titre, auteur, annee);
+        return livreRepository.save(livre);
     }
 }

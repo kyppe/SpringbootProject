@@ -1,16 +1,22 @@
 package com.sesame.librairie.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.sesame.librairie.model.Livre;
 
+@SpringBootTest
+@Transactional
 class LivreServiceTest {
 
-    // Pas de Spring : on crée le service directement
-    private final LivreService service = new LivreService();
+    @Autowired
+    private LivreService service;
 
     @Test
     void compterRenvoieCinqLivresAuDepart() {
@@ -36,7 +42,7 @@ class LivreServiceTest {
     @Test
     void ajouterAttribueUnIdentifiantEtAugmenteLeNombre() {
         Livre livre = service.ajouter("Candide", "Voltaire", 1759);
-        assertEquals(6L, livre.getId());
+        assertNotNull(livre.getId());
         assertEquals(6, service.compter());
     }
 }
